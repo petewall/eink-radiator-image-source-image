@@ -2,6 +2,7 @@ package cmd_test
 
 import (
 	"errors"
+	"image"
 
 	"github.com/spf13/viper"
 
@@ -16,15 +17,22 @@ import (
 
 var _ = Describe("Generate", func() {
 	var (
-		newImageContext *internalfakes.FakeImageContextMaker
-		imageContext    *internalfakes.FakeImageContext
+		img            image.Image
+		imageGenerator *internalfakes.FakeImageGenerator
+		imageEncoder   *internalfakes.FakeImageEncoder
+		imageWriter    *internalfakes.FakeImageWriter
 	)
 
 	BeforeEach(func() {
-		imageContext = &internalfakes.FakeImageContext{}
-		newImageContext = &internalfakes.FakeImageContextMaker{}
-		newImageContext.Returns(imageContext)
-		internal.NewImageContext = newImageContext.Spy
+		img = image.NewRGBA(image.Rect(0, 0, 10, 10))
+		imageGenerator = &internalfakes.FakeImageGenerator{}
+		imageGenerator.GenerateImageReturns(img, nil)
+		imageEncoder = &internalfakes.FakeImageEncoder{}
+		imageWriter = &internalfakes.FakeImageWriter{}
+
+		cmd.ImageGenerator = imageGenerator
+		internal.EncodeImage = imageEncoder.Spy
+		internal.WriteImage = imageWriter.Spy
 
 		viper.Set("to-stdout", false)
 		viper.Set("output", cmd.DefaultOutputFilename)
@@ -33,24 +41,23 @@ var _ = Describe("Generate", func() {
 	})
 
 	It("generates a blank image", func() {
-		cmd.Config = &internal.Config{
-			Source: "https://www.example.com/ganon.jpg",
-			Scale:  "cover",
-			Backgound: &internal.BackgroundType{
-				Color: "red",
-			},
-		}
 		err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
+		By("calling the image generator", func() {
+			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
+		})
+
 		By("defaulting to writing to image.png", func() {
-			Expect(imageContext.SavePNGCallCount()).To(Equal(1))
-			Expect(imageContext.SavePNGArgsForCall(0)).To(Equal("image.png"))
+			Expect(imageEncoder.CallCount()).To(Equal(0))
+			Expect(imageWriter.CallCount()).To(Equal(1))
+			filename, writtenImage := imageWriter.ArgsForCall(0)
+			Expect(filename).To(Equal("image.png"))
+			Expect(writtenImage).To(Equal(img))
 		})
 
 		By("defaulting to 640x480", func() {
-			Expect(newImageContext.CallCount()).To(Equal(1))
-			width, height := newImageContext.ArgsForCall(0)
+			width, height := imageGenerator.GenerateImageArgsForCall(0)
 			Expect(width).To(Equal(640))
 			Expect(height).To(Equal(480))
 		})
@@ -66,64 +73,38 @@ var _ = Describe("Generate", func() {
 		})
 
 		It("outputs the image to stdout", func() {
-			cmd.Config = &internal.Config{
-				Source: "https://www.example.com/moblin.jpg",
-				Scale:  "cover",
-				Backgound: &internal.BackgroundType{
-					Color: "black",
-				},
-			}
 			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(imageContext.EncodePNGCallCount()).To(Equal(1))
-			Expect(imageContext.EncodePNGArgsForCall(0)).To(Equal(output))
+			Expect(imageWriter.CallCount()).To(Equal(0))
+			Expect(imageEncoder.CallCount()).To(Equal(1))
+			out, encodedImage := imageEncoder.ArgsForCall(0)
+			Expect(out).To(Equal(output))
+			Expect(encodedImage).To(Equal(img))
 		})
 
 		When("encoding fails", func() {
 			BeforeEach(func() {
-				imageContext.EncodePNGReturns(errors.New("encode png failed"))
+				imageEncoder.Returns(errors.New("encode image failed"))
 			})
 
 			It("returns an error", func() {
 				err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("encode png failed"))
+				Expect(err.Error()).To(Equal("encode image failed"))
 			})
-		})
-	})
-
-	When("using --height and --width to change the resolution", func() {
-		It("generates an image of the specified resolution", func() {
-			viper.Set("height", 1000)
-			viper.Set("width", 2000)
-
-			cmd.Config = &internal.Config{
-				Source: "https://www.example.com/lizafos.jpg",
-				Scale:  "cover",
-				Backgound: &internal.BackgroundType{
-					Color: "green",
-				},
-			}
-			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
-			Expect(err).ToNot(HaveOccurred())
-
-			Expect(newImageContext.CallCount()).To(Equal(1))
-			width, height := newImageContext.ArgsForCall(0)
-			Expect(width).To(Equal(2000))
-			Expect(height).To(Equal(1000))
 		})
 	})
 
 	When("saving the image fails", func() {
 		BeforeEach(func() {
-			imageContext.SavePNGReturns(errors.New("save png failed"))
+			imageWriter.Returns(errors.New("save image failed"))
 		})
 
 		It("returns an error", func() {
 			err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("save png failed"))
+			Expect(err.Error()).To(Equal("save image failed"))
 		})
 	})
 })

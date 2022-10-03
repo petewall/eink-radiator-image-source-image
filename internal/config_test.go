@@ -2,6 +2,9 @@ package internal_test
 
 import (
 	"encoding/json"
+	"errors"
+	"image"
+	"net/http"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -13,46 +16,148 @@ import (
 )
 
 var _ = Describe("Config", func() {
-	XDescribe("GenerateImage", func() {
+	Describe("GenerateImage", func() {
 		var (
-			newImageContext *internalfakes.FakeImageContextMaker
-			imageContext    *internalfakes.FakeImageContext
+			httpGetter   *internalfakes.FakeHttpGetter
+			imageDecoder *internalfakes.FakeImageDecoder
 		)
 
 		BeforeEach(func() {
-			imageContext = &internalfakes.FakeImageContext{}
-			newImageContext = &internalfakes.FakeImageContextMaker{}
-			newImageContext.Returns(imageContext)
-			internal.NewImageContext = newImageContext.Spy
+			img := image.NewRGBA(image.Rect(0, 0, 1024, 768))
+			imageDecoder = &internalfakes.FakeImageDecoder{}
+			imageDecoder.Returns(img, nil)
+
+			res := &http.Response{}
+			httpGetter = &internalfakes.FakeHttpGetter{}
+			httpGetter.Returns(res, nil)
+
+			internal.DecodeImage = imageDecoder.Spy
+			internal.HttpGet = httpGetter.Spy
 		})
 
-		// It("makes an image of a certain color", func() {
-		// 	config := &internal.Config{Color: "blanchedalmond"}
-		// 	image := config.GenerateImage(100, 200)
+		Context("resized image", func() {
+			It("fetches an image and returns a scaled image", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "resize",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
 
-		// 	By("creating a new image context", func() {
-		// 		Expect(newImageContext.CallCount()).To(Equal(1))
-		// 		width, height := newImageContext.ArgsForCall(0)
-		// 		Expect(width).To(Equal(100))
-		// 		Expect(height).To(Equal(200))
-		// 	})
+				img, err := config.GenerateImage(200, 300)
+				Expect(err).ToNot(HaveOccurred())
 
-		// 	By("creating the right image", func() {
-		// 		Expect(imageContext.SetColorCallCount()).To(Equal(1))
-		// 		Expect(imageContext.SetColorArgsForCall(0)).To(Equal(color.RGBA{0xff, 0xeb, 0xcd, 0xff}))
-		// 		Expect(imageContext.DrawRectangleCallCount()).To(Equal(1))
-		// 		x, y, w, h := imageContext.DrawRectangleArgsForCall(0)
-		// 		Expect(x).To(Equal(0.0))
-		// 		Expect(y).To(Equal(0.0))
-		// 		Expect(w).To(Equal(100.0))
-		// 		Expect(h).To(Equal(200.0))
-		// 		Expect(imageContext.FillCallCount()).To(Equal(1))
-		// 	})
+				By("fetching the image", func() {
+					Expect(httpGetter.CallCount()).To(Equal(1))
+					Expect(httpGetter.ArgsForCall(0)).To(Equal("https://www.example.com/link.jpg"))
+				})
 
-		// 	By("returning the image context", func() {
-		// 		Expect(image).To(Equal(imageContext))
-		// 	})
-		// })
+				By("decoding the image", func() {
+					Expect(imageDecoder.CallCount()).To(Equal(1))
+				})
+
+				By("returning a resized version of the image", func() {
+					Expect(img.Bounds().Max).To(Equal(image.Point{200, 300}))
+				})
+			})
+		})
+
+		Context("contained image", func() {
+			XIt("fetches an image and returns a contained image", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "contain",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
+
+				img, err := config.GenerateImage(200, 300)
+				Expect(err).ToNot(HaveOccurred())
+
+				By("fetching the image", func() {
+					Expect(httpGetter.CallCount()).To(Equal(1))
+					Expect(httpGetter.ArgsForCall(0)).To(Equal("https://www.example.com/link.jpg"))
+				})
+
+				By("decoding the image", func() {
+					Expect(imageDecoder.CallCount()).To(Equal(1))
+				})
+
+				By("returning a contained version of the image", func() {
+					Expect(img.Bounds().Max).To(Equal(image.Point{200, 300}))
+				})
+			})
+		})
+
+		Context("covered image", func() {
+			XIt("fetches an image and returns a covered image", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "cover",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
+
+				img, err := config.GenerateImage(200, 300)
+				Expect(err).ToNot(HaveOccurred())
+
+				By("fetching the image", func() {
+					Expect(httpGetter.CallCount()).To(Equal(1))
+					Expect(httpGetter.ArgsForCall(0)).To(Equal("https://www.example.com/link.jpg"))
+				})
+
+				By("decoding the image", func() {
+					Expect(imageDecoder.CallCount()).To(Equal(1))
+				})
+
+				By("returning a covered version of the image", func() {
+					Expect(img.Bounds().Max).To(Equal(image.Point{200, 300}))
+				})
+			})
+		})
+
+		When("getting the image fails", func() {
+			BeforeEach(func() {
+				httpGetter.Returns(nil, errors.New("http get failed"))
+			})
+
+			It("returns an error", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "cover",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
+
+				_, err := config.GenerateImage(200, 300)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("failed to fetch image (https://www.example.com/link.jpg): http get failed"))
+			})
+		})
+
+		When("decoding the image fails", func() {
+			BeforeEach(func() {
+				imageDecoder.Returns(nil, errors.New("image decoding failed"))
+			})
+
+			It("returns an error", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "cover",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
+
+				_, err := config.GenerateImage(200, 300)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("failed to decode image (https://www.example.com/link.jpg): image decoding failed"))
+			})
+		})
 	})
 })
 
