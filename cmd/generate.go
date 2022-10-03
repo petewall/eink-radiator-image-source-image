@@ -22,6 +22,7 @@ var GenerateCmd = &cobra.Command{
 	Short:   "Generates a " + ImageTypeName + " image",
 	PreRunE: parseConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		cmd.SilenceUsage = true
 		image, err := ImageGenerator.GenerateImage(viper.GetInt("width"), viper.GetInt("height"))
 		if err != nil {
 			return err
