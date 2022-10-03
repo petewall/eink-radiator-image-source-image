@@ -2,6 +2,7 @@ package internal
 
 import (
 	"image"
+	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
 	"io"
