@@ -6,7 +6,7 @@ PLATFORM := $(shell uname -s)
 # #### DEPS ####
 .PHONY: deps-counterfeiter deps-ginkgo deps-modules
 
-deps-counterfeiter: deps-go-binary
+deps-counterfeiter:
 ifndef HAS_COUNTERFEITER
 	go install github.com/maxbrunsfeld/counterfeiter/v6@latest
 endif
