@@ -45,11 +45,15 @@ const (
 func init() {
 	rootCmd.AddCommand(GenerateCmd)
 	GenerateCmd.Flags().StringP("config", "c", "", "the path to the image config file")
+	_ = GenerateCmd.MarkFlagRequired("config")
 	GenerateCmd.Flags().Int("height", DefaultImageHeight, "the height of the image")
+	_ = GenerateCmd.MarkFlagRequired("height")
 	GenerateCmd.Flags().Int("width", DefaultImageWidth, "the width of the image")
+	_ = GenerateCmd.MarkFlagRequired("width")
 
 	GenerateCmd.Flags().StringP("output", "o", DefaultOutputFilename, "path to write the file")
 	GenerateCmd.Flags().Bool("to-stdout", false, "print the image to stdout")
+	GenerateCmd.MarkFlagsMutuallyExclusive("output", "to-stdout")
 	GenerateCmd.SetOut(os.Stdout)
 	_ = viper.BindPFlags(GenerateCmd.Flags())
 }
