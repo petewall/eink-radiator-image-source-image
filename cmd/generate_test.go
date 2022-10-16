@@ -36,8 +36,8 @@ var _ = Describe("Generate", func() {
 
 		viper.Set("to-stdout", false)
 		viper.Set("output", cmd.DefaultOutputFilename)
-		viper.Set("height", cmd.DefaultImageHeight)
-		viper.Set("width", cmd.DefaultImageWidth)
+		viper.Set("height", 1000)
+		viper.Set("width", 2000)
 	})
 
 	It("generates a blank image", func() {
@@ -56,10 +56,11 @@ var _ = Describe("Generate", func() {
 			Expect(writtenImage).To(Equal(img))
 		})
 
-		By("defaulting to 640x480", func() {
+		By("using the right resolution", func() {
+			Expect(imageGenerator.GenerateImageCallCount()).To(Equal(1))
 			width, height := imageGenerator.GenerateImageArgsForCall(0)
-			Expect(width).To(Equal(640))
-			Expect(height).To(Equal(480))
+			Expect(width).To(Equal(2000))
+			Expect(height).To(Equal(1000))
 		})
 	})
 
