@@ -49,14 +49,30 @@ func (c *Config) GenerateImage(width, height int) (image.Image, error) {
 		return nil, fmt.Errorf("failed to decode image (%s): %w", c.Source, err)
 	}
 
-	var result image.Image
-	if c.Scale == ScaleResize {
-		dst := image.NewRGBA(image.Rect(0, 0, width, height))
-		draw.ApproxBiLinear.Scale(dst, dst.Rect, im, im.Bounds(), draw.Over, nil)
-		result = dst
+	switch c.Scale {
+	case ScaleContain:
+		return c.generateContainedImage(width, height, im)
+	case ScaleCover:
+		return c.generateCoveredImage(width, height, im)
+	case ScaleResize:
+		return c.generateScaledImage(width, height, im)
+	default:
+		return nil, fmt.Errorf("unknown image scale type: %s", c.Scale)
 	}
+}
 
-	return result, nil
+func (c *Config) generateContainedImage(width, height int, im image.Image) (image.Image, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
+func (c *Config) generateCoveredImage(width, height int, im image.Image) (image.Image, error) {
+	return nil, fmt.Errorf("Not implemented yet")
+}
+
+func (c *Config) generateScaledImage(width, height int, im image.Image) (image.Image, error) {
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
+	draw.ApproxBiLinear.Scale(dst, dst.Rect, im, im.Bounds(), draw.Over, nil)
+	return dst, nil
 }
 
 func (c *Config) Validate() error {

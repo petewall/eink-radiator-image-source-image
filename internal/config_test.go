@@ -119,6 +119,22 @@ var _ = Describe("Config", func() {
 			})
 		})
 
+		Context("unknown scale type", func() {
+			It("returns an error", func() {
+				config := &internal.Config{
+					Source: "https://www.example.com/link.jpg",
+					Scale:  "smoothjazz",
+					Backgound: &internal.BackgroundType{
+						Color: "red",
+					},
+				}
+
+				_, err := config.GenerateImage(200, 300)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(Equal("unknown image scale type: smoothjazz"))
+			})
+		})
+
 		When("getting the image fails", func() {
 			BeforeEach(func() {
 				httpGetter.Returns(nil, errors.New("http get failed"))
