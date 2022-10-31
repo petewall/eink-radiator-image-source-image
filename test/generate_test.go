@@ -35,11 +35,11 @@ var _ = Describe("Generate", func() {
 		})
 	})
 
-	XContext("using contain", func() {
+	Context("using contain", func() {
 		It("generates an image that is shrunk to fit the desired resolution", func() {
 			outputFile = "contained.png"
-			Run("generate --config contain-config.json --output contained.png --height 300 --width 400")
-			Eventually(CommandSession).Should(Exit(0))
+			Run("generate --config contain-config.json --output contained.png --height 300 --width 300")
+			Eventually(CommandSession).WithTimeout(time.Second * 5).Should(Exit(0))
 
 			By("saving the image to a file", func() {
 				actualData, err := os.ReadFile(outputFile)
@@ -51,11 +51,11 @@ var _ = Describe("Generate", func() {
 		})
 	})
 
-	XContext("using cover", func() {
+	Context("using cover", func() {
 		It("generates an image that is cropped to fit the desired resolution", func() {
 			outputFile = "covered.png"
 			Run("generate --config cover-config.yaml --output covered.png --height 300 --width 400")
-			Eventually(CommandSession).Should(Exit(0))
+			Eventually(CommandSession).WithTimeout(time.Second * 5).Should(Exit(0))
 
 			By("saving the image to a file", func() {
 				actualData, err := os.ReadFile(outputFile)
