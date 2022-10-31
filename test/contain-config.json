@@ -1,7 +1,7 @@
 {
-    "source": "https://github.com/petewall/eink-radiator-image-source-image/raw/master/test/dog3.jpg",
+    "source": "https://github.com/petewall/eink-radiator-image-source-image/raw/main/test/dog2.jpg",
     "scale": "contain",
     "background": {
-        "color": "brown"
+        "color": "green"
     }
 }

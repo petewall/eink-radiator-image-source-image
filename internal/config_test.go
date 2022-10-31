@@ -64,7 +64,7 @@ var _ = Describe("Config", func() {
 		})
 
 		Context("contained image", func() {
-			XIt("fetches an image and returns a contained image", func() {
+			It("fetches an image and returns a contained image", func() {
 				config := &internal.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "contain",
@@ -92,7 +92,7 @@ var _ = Describe("Config", func() {
 		})
 
 		Context("covered image", func() {
-			XIt("fetches an image and returns a covered image", func() {
+			It("fetches an image and returns a covered image", func() {
 				config := &internal.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
