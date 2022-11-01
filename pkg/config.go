@@ -1,10 +1,9 @@
-package internal
+package pkg
 
 import (
 	"fmt"
 	"image"
 	"math"
-	"net/http"
 	"os"
 
 	"golang.org/x/image/draw"
@@ -12,6 +11,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	blank "github.com/petewall/eink-radiator-image-source-blank/pkg"
+	"github.com/petewall/eink-radiator-image-source-image/internal"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
@@ -36,18 +36,13 @@ type Config struct {
 	Backgound *BackgroundType `json:"background,omitempty" yaml:"background,omitempty"`
 }
 
-//counterfeiter:generate . HttpGetter
-type HttpGetter func(path string) (*http.Response, error)
-
-var HttpGet = http.Get
-
 func (c *Config) GenerateImage(width, height int) (image.Image, error) {
-	res, err := HttpGet(c.Source)
+	res, err := internal.HttpGet(c.Source)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch image (%s): %w", c.Source, err)
 	}
 
-	im, err := DecodeImage(res.Body)
+	im, err := internal.DecodeImage(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode image (%s): %w", c.Source, err)
 	}

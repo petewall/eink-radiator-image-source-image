@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/gomega/gexec"
 	"gopkg.in/yaml.v2"
 
-	"github.com/petewall/eink-radiator-image-source-image/internal"
+	"github.com/petewall/eink-radiator-image-source-image/pkg"
 )
 
 var _ = Describe("Config", func() {
@@ -14,7 +14,7 @@ var _ = Describe("Config", func() {
 		Run("config")
 		Eventually(CommandSession).Should(Exit(0))
 		output := CommandSession.Out.Contents()
-		var blankConfig internal.Config
+		var blankConfig pkg.Config
 		Expect(yaml.Unmarshal(output, &blankConfig)).To(Succeed())
 		Expect(blankConfig.Source).To(BeEmpty())
 		Expect(blankConfig.Scale).To(Equal("resize"))

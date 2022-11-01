@@ -1,4 +1,4 @@
-package internal_test
+package pkg_test
 
 import (
 	"encoding/json"
@@ -13,6 +13,7 @@ import (
 
 	"github.com/petewall/eink-radiator-image-source-image/internal"
 	"github.com/petewall/eink-radiator-image-source-image/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-image/pkg"
 )
 
 var _ = Describe("Config", func() {
@@ -37,10 +38,10 @@ var _ = Describe("Config", func() {
 
 		Context("resized image", func() {
 			It("fetches an image and returns a scaled image", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "resize",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -65,10 +66,10 @@ var _ = Describe("Config", func() {
 
 		Context("contained image", func() {
 			It("fetches an image and returns a contained image", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "contain",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -93,10 +94,10 @@ var _ = Describe("Config", func() {
 
 		Context("covered image", func() {
 			It("fetches an image and returns a covered image", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -121,10 +122,10 @@ var _ = Describe("Config", func() {
 
 		Context("unknown scale type", func() {
 			It("returns an error", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "smoothjazz",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -141,10 +142,10 @@ var _ = Describe("Config", func() {
 			})
 
 			It("returns an error", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -161,10 +162,10 @@ var _ = Describe("Config", func() {
 			})
 
 			It("returns an error", func() {
-				config := &internal.Config{
+				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &internal.BackgroundType{
+					Backgound: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -192,10 +193,10 @@ var _ = Describe("ParseConfig", func() {
 	})
 
 	BeforeEach(func() {
-		config := internal.Config{
+		config := pkg.Config{
 			Source: "https://www.example.com/link.jpg",
 			Scale:  "contain",
-			Backgound: &internal.BackgroundType{
+			Backgound: &pkg.BackgroundType{
 				Color: "red",
 			},
 		}
@@ -209,7 +210,7 @@ var _ = Describe("ParseConfig", func() {
 	})
 
 	It("parses the image config file", func() {
-		config, err := internal.ParseConfig(configFile.Name())
+		config, err := pkg.ParseConfig(configFile.Name())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(config.Source).To(Equal("https://www.example.com/link.jpg"))
 		Expect(config.Scale).To(Equal("contain"))
@@ -218,10 +219,10 @@ var _ = Describe("ParseConfig", func() {
 
 	Context("config file is json formatted", func() {
 		BeforeEach(func() {
-			config := internal.Config{
+			config := pkg.Config{
 				Source: "https://www.example.com/impa.jpg",
 				Scale:  "cover",
-				Backgound: &internal.BackgroundType{
+				Backgound: &pkg.BackgroundType{
 					Color: "blue",
 				},
 			}
@@ -231,7 +232,7 @@ var _ = Describe("ParseConfig", func() {
 		})
 
 		It("parses just fine", func() {
-			config, err := internal.ParseConfig(configFile.Name())
+			config, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).ToNot(HaveOccurred())
 			Expect(config.Source).To(Equal("https://www.example.com/impa.jpg"))
 			Expect(config.Scale).To(Equal("cover"))
@@ -241,7 +242,7 @@ var _ = Describe("ParseConfig", func() {
 
 	When("reading the config file fails", func() {
 		It("returns an error", func() {
-			_, err := internal.ParseConfig("this file does not exist")
+			_, err := pkg.ParseConfig("this file does not exist")
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("failed to read image config file: open this file does not exist: no such file or directory"))
 		})
@@ -253,18 +254,18 @@ var _ = Describe("ParseConfig", func() {
 		})
 
 		It("returns an error", func() {
-			_, err := internal.ParseConfig(configFile.Name())
+			_, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("failed to parse image config file: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into internal.Config"))
+			Expect(err.Error()).To(Equal("failed to parse image config file: yaml: unmarshal errors:\n  line 1: cannot unmarshal !!str `this is...` into pkg.Config"))
 		})
 	})
 
 	When("the config file has invalid data", func() {
 		BeforeEach(func() {
-			config := internal.Config{
+			config := pkg.Config{
 				Source: "https://www.example.com/impa.jpg",
 				Scale:  "zelda",
-				Backgound: &internal.BackgroundType{
+				Backgound: &pkg.BackgroundType{
 					Color: "link",
 				},
 			}
@@ -274,7 +275,7 @@ var _ = Describe("ParseConfig", func() {
 		})
 
 		It("returns an error", func() {
-			_, err := internal.ParseConfig(configFile.Name())
+			_, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("config file is not valid: scale value is invalid: \"zelda\", must be one of resize, contain, cover"))
 		})

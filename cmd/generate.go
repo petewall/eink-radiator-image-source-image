@@ -7,13 +7,14 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/petewall/eink-radiator-image-source-image/internal"
+	"github.com/petewall/eink-radiator-image-source-image/pkg"
 )
 
-var ImageGenerator internal.ImageGenerator
+var ImageGenerator pkg.ImageGenerator
 
 func parseConfig(cmd *cobra.Command, args []string) error {
 	var err error
-	ImageGenerator, err = internal.ParseConfig(viper.GetString("config"))
+	ImageGenerator, err = pkg.ParseConfig(viper.GetString("config"))
 	return err
 }
 

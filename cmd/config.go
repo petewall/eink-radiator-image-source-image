@@ -5,17 +5,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/petewall/eink-radiator-image-source-image/internal"
+	"github.com/petewall/eink-radiator-image-source-image/pkg"
 )
 
 var ConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Print a blank config for the " + ImageTypeName + " image type",
 	Run: func(cmd *cobra.Command, args []string) {
-		encoded, _ := json.Marshal(internal.Config{
+		encoded, _ := json.Marshal(pkg.Config{
 			Source: "",
-			Scale:  internal.ScaleResize,
-			Backgound: &internal.BackgroundType{
+			Scale:  pkg.ScaleResize,
+			Backgound: &pkg.BackgroundType{
 				Color: "",
 			},
 		})
