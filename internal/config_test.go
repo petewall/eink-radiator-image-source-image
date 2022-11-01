@@ -11,8 +11,8 @@ import (
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
 
-	"github.com/petewall/eink-radiator-image-source-image/v2/internal"
-	"github.com/petewall/eink-radiator-image-source-image/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-image/internal"
+	"github.com/petewall/eink-radiator-image-source-image/internal/internalfakes"
 )
 
 var _ = Describe("Config", func() {

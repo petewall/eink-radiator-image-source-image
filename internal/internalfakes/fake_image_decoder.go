@@ -6,7 +6,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/petewall/eink-radiator-image-source-image/v2/internal"
+	"github.com/petewall/eink-radiator-image-source-image/internal"
 )
 
 type FakeImageDecoder struct {

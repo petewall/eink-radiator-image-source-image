@@ -10,9 +10,9 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 
-	"github.com/petewall/eink-radiator-image-source-image/v2/cmd"
-	"github.com/petewall/eink-radiator-image-source-image/v2/internal"
-	"github.com/petewall/eink-radiator-image-source-image/v2/internal/internalfakes"
+	"github.com/petewall/eink-radiator-image-source-image/cmd"
+	"github.com/petewall/eink-radiator-image-source-image/internal"
+	"github.com/petewall/eink-radiator-image-source-image/internal/internalfakes"
 )
 
 var _ = Describe("Generate", func() {

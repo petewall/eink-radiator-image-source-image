@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"golang.org/x/image/colornames"
 	"golang.org/x/image/draw"
 
 	"gopkg.in/yaml.v2"
+
+	blank "github.com/petewall/eink-radiator-image-source-blank/pkg"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
@@ -64,6 +65,9 @@ func (c *Config) GenerateImage(width, height int) (image.Image, error) {
 }
 
 func (c *Config) generateContainedImage(width, height int, im image.Image) (image.Image, error) {
+	backgroundConfig := blank.Config{Color: c.Backgound.Color}
+	background := backgroundConfig.GenerateImage(width, height)
+
 	xScale := float64(width) / float64(im.Bounds().Size().X)
 	yScale := float64(height) / float64(im.Bounds().Size().Y)
 	scaleFactor := math.Min(xScale, yScale)
@@ -73,8 +77,6 @@ func (c *Config) generateContainedImage(width, height int, im image.Image) (imag
 	scaled := image.NewRGBA(image.Rect(0, 0, scaledWidth, scaledHeight))
 	draw.CatmullRom.Scale(scaled, scaled.Rect, im, im.Bounds(), draw.Over, nil)
 
-	dst := image.NewRGBA(image.Rect(0, 0, width, height))
-
 	var sp image.Point
 	if xScale > yScale {
 		sp = image.Point{X: (scaledWidth - width) / 2, Y: 0}
@@ -82,7 +84,7 @@ func (c *Config) generateContainedImage(width, height int, im image.Image) (imag
 		sp = image.Point{X: 0, Y: (scaledHeight - height) / 2}
 	}
 
-	background := &image.Uniform{colornames.Map[c.Backgound.Color]}
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 	draw.Draw(dst, dst.Rect, background, image.Point{}, draw.Src)
 	draw.Draw(dst, dst.Rect, scaled, sp, draw.Src)
 	return dst, nil
