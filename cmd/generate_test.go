@@ -41,7 +41,7 @@ var _ = Describe("Generate", func() {
 		viper.Set("width", 2000)
 	})
 
-	It("generates a blank image", func() {
+	It("generates an image", func() {
 		err := cmd.GenerateCmd.RunE(cmd.GenerateCmd, []string{})
 		Expect(err).ToNot(HaveOccurred())
 

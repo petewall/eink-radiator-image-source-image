@@ -10,7 +10,6 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	blank "github.com/petewall/eink-radiator-image-source-blank/pkg"
 	"github.com/petewall/eink-radiator-image-source-image/internal"
 )
 
@@ -53,15 +52,14 @@ func (c *Config) GenerateImage(width, height int) (image.Image, error) {
 	case ScaleCover:
 		return c.generateCoveredImage(width, height, im)
 	case ScaleResize:
-		return c.generateScaledImage(width, height, im)
+		return c.generateResizedImage(width, height, im)
 	default:
 		return nil, fmt.Errorf("unknown image scale type: %s", c.Scale)
 	}
 }
 
 func (c *Config) generateContainedImage(width, height int, im image.Image) (image.Image, error) {
-	backgroundConfig := blank.Config{Color: c.Backgound.Color}
-	background := backgroundConfig.GenerateImage(width, height)
+	background := internal.MakeBackground(width, height, c.Backgound.Color)
 
 	xScale := float64(width) / float64(im.Bounds().Size().X)
 	yScale := float64(height) / float64(im.Bounds().Size().Y)
@@ -69,8 +67,8 @@ func (c *Config) generateContainedImage(width, height int, im image.Image) (imag
 
 	scaledWidth := int(scaleFactor * float64(im.Bounds().Size().X))
 	scaledHeight := int(scaleFactor * float64(im.Bounds().Size().Y))
-	scaled := image.NewRGBA(image.Rect(0, 0, scaledWidth, scaledHeight))
-	draw.CatmullRom.Scale(scaled, scaled.Rect, im, im.Bounds(), draw.Over, nil)
+	scaled := internal.NewImage(scaledWidth, scaledHeight)
+	internal.Scale(scaled, scaled.Rect, im, im.Bounds(), draw.Over, nil)
 
 	var sp image.Point
 	if xScale > yScale {
@@ -79,9 +77,9 @@ func (c *Config) generateContainedImage(width, height int, im image.Image) (imag
 		sp = image.Point{X: 0, Y: (scaledHeight - height) / 2}
 	}
 
-	dst := image.NewRGBA(image.Rect(0, 0, width, height))
-	draw.Draw(dst, dst.Rect, background, image.Point{}, draw.Src)
-	draw.Draw(dst, dst.Rect, scaled, sp, draw.Src)
+	dst := internal.NewImage(width, height)
+	internal.Draw(dst, dst.Rect, background, image.Point{}, draw.Src)
+	internal.Draw(dst, dst.Rect, scaled, sp, draw.Src)
 	return dst, nil
 }
 
@@ -92,10 +90,8 @@ func (c *Config) generateCoveredImage(width, height int, im image.Image) (image.
 
 	scaledWidth := int(scaleFactor * float64(im.Bounds().Size().X))
 	scaledHeight := int(scaleFactor * float64(im.Bounds().Size().Y))
-	scaled := image.NewRGBA(image.Rect(0, 0, scaledWidth, scaledHeight))
-	draw.CatmullRom.Scale(scaled, scaled.Rect, im, im.Bounds(), draw.Over, nil)
-
-	dst := image.NewRGBA(image.Rect(0, 0, width, height))
+	scaled := internal.NewImage(scaledWidth, scaledHeight)
+	internal.Scale(scaled, scaled.Rect, im, im.Bounds(), draw.Over, nil)
 
 	var sp image.Point
 	if xScale > yScale {
@@ -104,13 +100,14 @@ func (c *Config) generateCoveredImage(width, height int, im image.Image) (image.
 		sp = image.Point{X: (scaledWidth - width) / 2, Y: 0}
 	}
 
-	draw.Draw(dst, dst.Rect, scaled, sp, draw.Over)
+	dst := internal.NewImage(width, height)
+	internal.Draw(dst, dst.Rect, scaled, sp, draw.Over)
 	return dst, nil
 }
 
-func (c *Config) generateScaledImage(width, height int, im image.Image) (image.Image, error) {
-	dst := image.NewRGBA(image.Rect(0, 0, width, height))
-	draw.CatmullRom.Scale(dst, dst.Rect, im, im.Bounds(), draw.Over, nil)
+func (c *Config) generateResizedImage(width, height int, im image.Image) (image.Image, error) {
+	dst := internal.NewImage(width, height)
+	internal.Scale(dst, dst.Rect, im, im.Bounds(), draw.Over, nil)
 	return dst, nil
 }
 

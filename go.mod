@@ -4,10 +4,11 @@ go 1.19
 
 require (
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0
-	github.com/google/pprof v0.0.0-20221010195024-131d412537ea
+	github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
 	github.com/onsi/ginkgo/v2 v2.4.0
 	github.com/onsi/gomega v1.23.0
-	github.com/petewall/eink-radiator-image-source-blank v0.1.16
+	github.com/petewall/eink-radiator-image-source-blank v0.1.17
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
 	golang.org/x/image v0.1.0
@@ -22,7 +23,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
