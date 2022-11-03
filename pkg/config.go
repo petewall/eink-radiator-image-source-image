@@ -30,9 +30,9 @@ type BackgroundType struct {
 }
 
 type Config struct {
-	Source    string          `json:"source" yaml:"source"`
-	Scale     string          `json:"scale" yaml:"scale"`
-	Backgound *BackgroundType `json:"background,omitempty" yaml:"background,omitempty"`
+	Source     string          `json:"source" yaml:"source"`
+	Scale      string          `json:"scale" yaml:"scale"`
+	Background *BackgroundType `json:"background,omitempty" yaml:"background,omitempty"`
 }
 
 func (c *Config) GenerateImage(width, height int) (image.Image, error) {
@@ -59,7 +59,7 @@ func (c *Config) GenerateImage(width, height int) (image.Image, error) {
 }
 
 func (c *Config) generateContainedImage(width, height int, im image.Image) (image.Image, error) {
-	background := internal.MakeBackground(width, height, c.Backgound.Color)
+	background := internal.MakeBackground(width, height, c.Background.Color)
 
 	xScale := float64(width) / float64(im.Bounds().Size().X)
 	yScale := float64(height) / float64(im.Bounds().Size().Y)

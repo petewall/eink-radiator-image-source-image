@@ -66,7 +66,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "resize",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -115,7 +115,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "contain",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -197,7 +197,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -255,7 +255,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "smoothjazz",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -275,7 +275,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -295,7 +295,7 @@ var _ = Describe("Config", func() {
 				config := &pkg.Config{
 					Source: "https://www.example.com/link.jpg",
 					Scale:  "cover",
-					Backgound: &pkg.BackgroundType{
+					Background: &pkg.BackgroundType{
 						Color: "red",
 					},
 				}
@@ -326,7 +326,7 @@ var _ = Describe("ParseConfig", func() {
 		config := pkg.Config{
 			Source: "https://www.example.com/link.jpg",
 			Scale:  "contain",
-			Backgound: &pkg.BackgroundType{
+			Background: &pkg.BackgroundType{
 				Color: "red",
 			},
 		}
@@ -344,7 +344,7 @@ var _ = Describe("ParseConfig", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(config.Source).To(Equal("https://www.example.com/link.jpg"))
 		Expect(config.Scale).To(Equal("contain"))
-		Expect(config.Backgound.Color).To(Equal("red"))
+		Expect(config.Background.Color).To(Equal("red"))
 	})
 
 	Context("config file is json formatted", func() {
@@ -352,7 +352,7 @@ var _ = Describe("ParseConfig", func() {
 			config := pkg.Config{
 				Source: "https://www.example.com/impa.jpg",
 				Scale:  "cover",
-				Backgound: &pkg.BackgroundType{
+				Background: &pkg.BackgroundType{
 					Color: "blue",
 				},
 			}
@@ -366,7 +366,7 @@ var _ = Describe("ParseConfig", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(config.Source).To(Equal("https://www.example.com/impa.jpg"))
 			Expect(config.Scale).To(Equal("cover"))
-			Expect(config.Backgound.Color).To(Equal("blue"))
+			Expect(config.Background.Color).To(Equal("blue"))
 		})
 	})
 
@@ -395,7 +395,7 @@ var _ = Describe("ParseConfig", func() {
 			config := pkg.Config{
 				Source: "https://www.example.com/impa.jpg",
 				Scale:  "zelda",
-				Backgound: &pkg.BackgroundType{
+				Background: &pkg.BackgroundType{
 					Color: "link",
 				},
 			}
