@@ -1,5 +1,7 @@
 # eInk Radiator Image Source: Image
 
+![CI](https://ci.petewall.net/api/v1/teams/main/pipelines/eink-radiator/jobs/test-image-source-image/badge)
+
 Generates an image from an existing image.
 
 ```bash
