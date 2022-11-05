@@ -390,7 +390,25 @@ var _ = Describe("ParseConfig", func() {
 		})
 	})
 
-	When("the config file has invalid data", func() {
+	When("the config file has missing source", func() {
+		BeforeEach(func() {
+			config := pkg.Config{
+				Source: "",
+				Scale:  "resize",
+			}
+			var err error
+			configFileContents, err = json.Marshal(config)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an error", func() {
+			_, err := pkg.ParseConfig(configFile.Name())
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("config file is not valid: missing image source"))
+		})
+	})
+
+	When("the config file has an invalid scale value", func() {
 		BeforeEach(func() {
 			config := pkg.Config{
 				Source: "https://www.example.com/impa.jpg",
@@ -408,6 +426,27 @@ var _ = Describe("ParseConfig", func() {
 			_, err := pkg.ParseConfig(configFile.Name())
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("config file is not valid: scale value is invalid: \"zelda\", must be one of resize, contain, cover"))
+		})
+	})
+
+	When("the config file has an invalid background color", func() {
+		BeforeEach(func() {
+			config := pkg.Config{
+				Source: "https://www.example.com/impa.jpg",
+				Scale:  "cover",
+				Background: &pkg.BackgroundType{
+					Color: "link",
+				},
+			}
+			var err error
+			configFileContents, err = json.Marshal(config)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an error", func() {
+			_, err := pkg.ParseConfig(configFile.Name())
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("config file is not valid: invalid background: unknown color: \"link\""))
 		})
 	})
 })

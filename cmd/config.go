@@ -15,9 +15,6 @@ var ConfigCmd = &cobra.Command{
 		encoded, _ := json.Marshal(pkg.Config{
 			Source: "",
 			Scale:  pkg.ScaleResize,
-			Background: &pkg.BackgroundType{
-				Color: "",
-			},
 		})
 		cmd.Println(string(encoded))
 	},

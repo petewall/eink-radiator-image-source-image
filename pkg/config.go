@@ -10,6 +10,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	blank "github.com/petewall/eink-radiator-image-source-blank/pkg"
 	"github.com/petewall/eink-radiator-image-source-image/internal"
 )
 
@@ -112,10 +113,19 @@ func (c *Config) generateResizedImage(width, height int, im image.Image) (image.
 }
 
 func (c *Config) Validate() error {
+	if c.Source == "" {
+		return fmt.Errorf("missing image source")
+	}
+
 	if c.Scale != ScaleResize &&
 		c.Scale != ScaleContain &&
 		c.Scale != ScaleCover {
 		return fmt.Errorf("scale value is invalid: \"%s\", must be one of resize, contain, cover", c.Scale)
+	}
+
+	backgroundConfig := blank.Config{Color: c.Background.Color}
+	if err := backgroundConfig.Validate(); err != nil {
+		return fmt.Errorf("invalid background: %w", err)
 	}
 	return nil
 }
@@ -130,6 +140,15 @@ func ParseConfig(path string) (*Config, error) {
 	err = yaml.Unmarshal(configData, &config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse image config file: %w", err)
+	}
+
+	if config.Background == nil {
+		config.Background = &BackgroundType{
+			Color: "white",
+		}
+	}
+	if config.Background.Color == "" {
+		config.Background.Color = "white"
 	}
 
 	err = config.Validate()

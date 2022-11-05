@@ -18,6 +18,6 @@ var _ = Describe("Config", func() {
 		Expect(yaml.Unmarshal(output, &blankConfig)).To(Succeed())
 		Expect(blankConfig.Source).To(BeEmpty())
 		Expect(blankConfig.Scale).To(Equal("resize"))
-		Expect(blankConfig.Background.Color).To(BeEmpty())
+		Expect(blankConfig.Background).To(BeNil())
 	})
 })
