@@ -7,7 +7,7 @@ require (
 	github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.5.0
 	github.com/onsi/ginkgo/v2 v2.7.0
-	github.com/onsi/gomega v1.24.2
+	github.com/onsi/gomega v1.25.0
 	github.com/petewall/eink-radiator-image-source-blank v0.1.28
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
