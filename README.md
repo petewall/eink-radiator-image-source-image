@@ -15,7 +15,7 @@ The configuration is the image source, which must be a publically accessible URL
 | field            | default | required | description |
 |------------------|---------|----------|-------------|
 | source           |         | Yes      | The URL to the image |
-| scale            |         | Ye       | Algorithm to use when resizing the image to the desired resolution |
+| scale            |         | Yes      | Algorithm to use when resizing the image to the desired resolution |
 | background.color | white   | No       | The color of the background (used when contained images are a different resolution ratio) |
 
 Possible options for `scale`:
