@@ -22,7 +22,7 @@ deps-modules:
 # #### TEST ####
 .PHONY: lint test
 
-lint:
+lint: deps-modules
 ifndef HAS_GOLANGCI_LINT
 ifeq ($(PLATFORM), Darwin)
 	brew install golangci-lint
