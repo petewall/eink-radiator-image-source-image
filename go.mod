@@ -11,7 +11,7 @@ require (
 	github.com/petewall/eink-radiator-image-source-blank v0.1.35
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
-	golang.org/x/image v0.3.0
+	golang.org/x/image v0.5.0
 	golang.org/x/tools v0.6.0
 	gopkg.in/yaml.v2 v2.4.0
 )
