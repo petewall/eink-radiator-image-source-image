@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-task/slim-sprig v2.20.0+incompatible
 	github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.6.1
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.6.2
 	github.com/onsi/ginkgo/v2 v2.10.0
 	github.com/onsi/gomega v1.27.8
 	github.com/petewall/eink-radiator-image-source-blank v0.1.51
