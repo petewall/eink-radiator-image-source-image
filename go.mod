@@ -8,7 +8,7 @@ require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.6.2
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
-	github.com/petewall/eink-radiator-image-source-blank v0.1.54
+	github.com/petewall/eink-radiator-image-source-blank v0.1.56
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	golang.org/x/image v0.9.0
