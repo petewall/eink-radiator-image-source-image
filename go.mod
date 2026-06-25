@@ -4,9 +4,9 @@ go 1.25.0
 
 require (
 	github.com/go-task/slim-sprig v2.20.0+incompatible
-	github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c
+	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.2
-	github.com/onsi/ginkgo/v2 v2.11.0
+	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1
 	github.com/petewall/eink-radiator-image-source-blank v0.1.56
 	github.com/spf13/cobra v1.10.2
@@ -19,8 +19,10 @@ require (
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
+	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
+	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/uuid v1.1.2 // indirect
